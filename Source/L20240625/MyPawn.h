@@ -35,22 +35,44 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	TObjectPtr <UBoxComponent> Box;
-	TObjectPtr <UStaticMeshComponent> Body;
-	TObjectPtr <UStaticMeshComponent> Left;
-	TObjectPtr <UStaticMeshComponent> Right;
-	TObjectPtr <UArrowComponent> Arrow;
-	TObjectPtr <UCameraComponent> Camera;
-	TObjectPtr <USpringArmComponent> SpringArm;
-	TObjectPtr <UFloatingPawnMovement> Movemont;
 
+	UPROPERTY(VisibleAnyWhere, BlueprintReadOnly, Category="Components")
+	TObjectPtr <UBoxComponent> Box;
+	UPROPERTY(VisibleAnyWhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr <UStaticMeshComponent> Body;
+	UPROPERTY(VisibleAnyWhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr <UStaticMeshComponent> Left;
+	UPROPERTY(VisibleAnyWhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr <UStaticMeshComponent> Right;
+	UPROPERTY(VisibleAnyWhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr <UArrowComponent> Arrow;
+	UPROPERTY(VisibleAnyWhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr <UCameraComponent> Camera;
+	UPROPERTY(VisibleAnyWhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr <USpringArmComponent> SpringArm;
+	UPROPERTY(VisibleAnyWhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr <UFloatingPawnMovement> Movemont;
+	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = "Status")
 	float Booster;
+
+	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = "Status")
+	TSubclassOf<class AMyRocket> RocketTemplate;
 
 	void Pitch(float Value);
 	void Roll(float Value);
 	void PressBooster();
 	void ReleaseBooster();
+
+	UFUNCTION(BlueprintNativeEvent)
+	void BPCallCPPOverride(int Score);
+	void BPCallCPPOverride_Implementation(int Score);
+
+
+	//C++ call Blueprint function execute, 아트, 기획자는 프로그래밍을 손을 안됨
+	UFUNCTION(BlueprintImplementableEvent)
+	void BPCallCPP(int Score);
+
+	//Blueprint call C++ function execute
+	UFUNCTION(BlueprintCallable)
 	void Fire();
-
-
 };

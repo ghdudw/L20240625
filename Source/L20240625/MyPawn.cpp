@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "MyPawn.h"
@@ -10,6 +10,7 @@
 #include "Components/ArrowComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "MyRocket.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 // Sets default values
 AMyPawn::AMyPawn()
@@ -60,6 +61,12 @@ AMyPawn::AMyPawn()
 	Movemont = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("Moveont"));
 
 	Booster = 1.0f;
+
+	static ConstructorHelpers::FClassFinder<AMyRocket> BP_RocketClass(TEXT("/Script/Engine.Blueprint'/Game/BP_Rocket.BP_Rocket_C'"));
+	if (BP_RocketClass.Succeeded())
+	{
+		RocketTemplate = BP_RocketClass.Class;
+	}
 }
 
 // Called when the game starts or when spawned
@@ -87,7 +94,7 @@ void AMyPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAxis(TEXT("Roll"), this, &AMyPawn::Roll);
 	PlayerInputComponent->BindAction(TEXT("Booster"), IE_Pressed, this, &AMyPawn::PressBooster);
 	PlayerInputComponent->BindAction(TEXT("Booster"), IE_Released, this, &AMyPawn::ReleaseBooster);
-	PlayerInputComponent->BindAction(TEXT("Fire"), IE_Pressed, this, &AMyPawn::Fire);
+	//PlayerInputComponent->BindAction(TEXT("Fire"), IE_Pressed, this, &AMyPawn::Fire);
 
 }
 
@@ -115,9 +122,18 @@ void AMyPawn::ReleaseBooster()
 	Booster = 0.5f;
 }
 
-void AMyPawn::Fire()
+void AMyPawn::BPCallCPPOverride_Implementation(int Score)
 {
-	GetWorld()->SpawnActor<AMyRocket>(Arrow->K2_GetComponentLocation(),
-		Arrow->K2_GetComponentRotation());
+	UKismetSystemLibrary::PrintString(GetWorld(),
+		TEXT("이건 C++에서 기본 실행되는 거"));
 }
 
+void AMyPawn::Fire()
+{
+	GetWorld()->SpawnActor<AActor>(RocketTemplate, Arrow->K2_GetComponentLocation(),
+		Arrow->K2_GetComponentRotation());
+
+	//점수 계산, 색 바꿔
+	//BPCallCPP(10);
+	BPCallCPPOverride(20);
+}
